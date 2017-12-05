@@ -57,18 +57,37 @@ class Electrojector {
     return dep
   }
 
-  $done (...segments) {
+  callingDirectory () {
+    const _prepareStackTrace = Error.prepareStackTrace
+
+    try {
+      const err = new Error()
+      Error.prepareStackTrace = (err, stack) => stack
+      const thisFile = err.stack.shift().getFileName()
+      for (let frame of err.stack) {
+        const callingFile = frame.getFileName()
+        if (thisFile !== callingFile) return path.dirname(callingFile)
+      }
+      throw new Error('could not find the calling directory')
+    } finally {
+      Error.prepareStackTrace = _prepareStackTrace
+    }
+  }
+
+  $done () {
     this.isDone = true
   }
 
-  $inject (...segments) {
-    const absolute = path.resolve(...segments)
+  $inject (request) {
+    const origin = this.callingDirectory()
+    const absolute = require.resolve(request, {paths: [origin]})
     const name = path.basename(absolute).split('.')[0]
     this.installFault(name, deps => require(absolute)(deps))
   }
 
-  $require (...segments) {
-    const absolute = path.resolve(...segments)
+  $require (request) {
+    const origin = this.callingDirectory()
+    const absolute = require.resolve(request, {paths: [origin]})
     const name = path.basename(absolute).split('.')[0]
     this.installFault(name, () => require(absolute))
   }
