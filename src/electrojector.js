@@ -1,4 +1,5 @@
 const path = require('path')
+const Conflator = require('conflator')
 
 class Electrojector {
   constructor () {
@@ -11,13 +12,16 @@ class Electrojector {
   }
 
   scope () {
+    const lazyTarget = {}
+    const eagerTarget = {$: new Proxy(lazyTarget, this)}
     return {
       deps: this.deps,
-      init: new Proxy({}, this)
+      init: new Proxy(eagerTarget, this)
     }
   }
 
   get (target, name, receiver) {
+    if (name === '$') return target.$
     if (name[0] === '$') {
       if (!(name in this)) throw new Error(`${name} is not an init method`)
       return (...args) => this[name].apply(this, args)
@@ -30,10 +34,10 @@ class Electrojector {
     if (this.isDone) throw new Error('dependency configuration is already complete')
 
     target[name] = value
-    if (typeof value === 'function') {
-      this.installFault(name, value)
-    } else {
+    if ('$' in target) {
       this.deps[name] = value
+    } else {
+      this.installFault(name, value)
     }
 
     return true
@@ -72,6 +76,12 @@ class Electrojector {
     } finally {
       Error.prepareStackTrace = _prepareStackTrace
     }
+  }
+
+  $config (request) {
+    const origin = this.callingDirectory()
+    const absolute = path.resolve(origin, request)
+    this.installFault('config', () => Conflator.env(absolute))
   }
 
   $done () {

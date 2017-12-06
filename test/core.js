@@ -16,18 +16,31 @@ test('create with init function', t => {
   t.is(deps.obj, val)
 })
 
+test('eager init with function', t => {
+  const {deps, init} = electrojector()
+  init.fn = () => 1
+  t.is(deps.fn(), 1)
+})
+
 test('lazy init', t => {
   const {deps, init} = electrojector()
   const val = {}
-  init.obj = () => val
+  init.$.obj = () => val
   t.is(deps.obj, val)
+})
+
+test('init with dependencies', t => {
+  const {deps, init} = electrojector()
+  init.one = 1
+  init.$.two = deps => deps.one + 1
+  t.is(deps.two, 2)
 })
 
 test('idempotent init', t => {
   const val = {}
   const lazy = sinon.spy(() => val)
   const {deps, init} = electrojector()
-  init.obj = lazy
+  init.$.obj = lazy
   t.is(deps.obj, val)
   t.is(deps.obj, val)
   t.is(deps.obj, val)
@@ -48,7 +61,7 @@ test('names beginning with $ are reserved', t => {
 
 test('errors on get of unrecognized reserved name', t => {
   const {deps, init} = electrojector()
-  t.throws(() => (init.$reservedName), '$reservedName is not an init method')
+  t.throws(() => init.$reservedName, '$reservedName is not an init method')
 })
 
 test('init fn calls done', t => {

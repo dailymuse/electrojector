@@ -20,3 +20,9 @@ test('$inject', t => {
   init.$inject('./dependencies/dependent.js')
   t.is(deps.dependent, 'I depend on independent')
 })
+
+test('$config', t => {
+  const {deps, init} = electrojector()
+  init.$config('./config')
+  t.is(deps.config.yyy, 6)
+})
