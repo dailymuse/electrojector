@@ -46,6 +46,11 @@ test('names beginning with $ are reserved', t => {
   t.throws(() => (init.$reservedName = 'aaa'), 'names begining with $ are reserved')
 })
 
+test('errors on get of unrecognized reserved name', t => {
+  const {deps, init} = electrojector()
+  t.throws(() => (init.$reservedName), '$reservedName is not an init method')
+})
+
 test('init fn calls done', t => {
   let init
   const deps = electrojector(_init => (init = _init))
