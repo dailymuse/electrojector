@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+export PATH="node_modules/.bin:$PATH"
+export NODE_ENV=test
+export TZ=UTC
+
+yarn install
+./bin/upgrade
+
+# Run Standard
+standard &&
+
+# Run tests
+ava --tap > test-output.txt
+

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+yarn upgrade conflator
+cd node_modules/conflator
+./bin/upgrade
+cd "$cwd"

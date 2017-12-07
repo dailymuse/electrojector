@@ -1,5 +1,6 @@
 const path = require('path')
 const Conflator = require('conflator')
+const Module = require('module')
 
 class Electrojector {
   constructor () {
@@ -61,21 +62,40 @@ class Electrojector {
     return dep
   }
 
-  callingDirectory () {
+  callingFile () {
     const _prepareStackTrace = Error.prepareStackTrace
 
     try {
       const err = new Error()
-      Error.prepareStackTrace = (err, stack) => stack
+      Error.prepareStackTrace = (_, stack) => stack
       const thisFile = err.stack.shift().getFileName()
       for (let frame of err.stack) {
         const callingFile = frame.getFileName()
-        if (thisFile !== callingFile) return path.dirname(callingFile)
+        if (thisFile !== callingFile) return callingFile
       }
       throw new Error('could not find the calling directory')
     } finally {
       Error.prepareStackTrace = _prepareStackTrace
     }
+  }
+
+  callingDirectory () {
+    return path.dirname(this.callingFile())
+  }
+
+  resolve (_name, request) {
+    if (!request) {
+      request = _name
+      _name = undefined
+    }
+    const origin = this.callingFile()
+    const absPath = Module._resolveFilename(request, {
+      id: origin,
+      filename: origin,
+      paths: Module._nodeModulePaths(path.dirname(origin))
+    })
+    const name = _name || path.basename(request).split('.')[0]
+    return {origin, absPath, name}
   }
 
   $config (request) {
@@ -88,18 +108,14 @@ class Electrojector {
     this.isDone = true
   }
 
-  $inject (request) {
-    const origin = this.callingDirectory()
-    const absolute = require.resolve(request, {paths: [origin]})
-    const name = path.basename(absolute).split('.')[0]
-    this.installFault(name, deps => require(absolute)(deps))
+  $inject (_name, request) {
+    const {absPath, name} = this.resolve(_name, request)
+    this.installFault(name, deps => require(absPath)(deps))
   }
 
-  $require (request) {
-    const origin = this.callingDirectory()
-    const absolute = require.resolve(request, {paths: [origin]})
-    const name = path.basename(absolute).split('.')[0]
-    this.installFault(name, () => require(absolute))
+  $require (_name, request) {
+    const {absPath, name} = this.resolve(_name, request)
+    this.installFault(name, () => require(absPath))
   }
 }
 
