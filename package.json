@@ -8,6 +8,7 @@
     "ava": "~0.24.0"
   },
   "dependencies": {
+    "conflator": "git+ssh://git@github.com/betterco/conflator.git#develop",
     "sinon": "~4.1.2"
   },
   "ava": {
