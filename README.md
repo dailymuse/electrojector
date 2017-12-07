@@ -16,13 +16,13 @@ Usage
 const electrojector = require('electrojector')
 
 const {deps, init} = electrojector()
-init.eager = 42
-init.lazy = deps => deps.eager + 1
-init.$require(__dirname, 'src/add')
-init.$inject(__dirname, 'src/sum')
+init.eager = 3
+init.$.lazy = deps => deps.eager + 1
+init.$require('./src/add')
+init.$inject('./src/sum')
 
 const sum, eager, lazy = {deps}
-console.log(sum(eager, lazy, 45)) // 130
+console.log(sum(eager, lazy, 5)) // 12
 
 // src/add.js
 module.exports = (a, b) => a + b

@@ -48,24 +48,24 @@ test('idempotent init', t => {
 })
 
 test('$done prevents further initialization', t => {
-  const {deps, init} = electrojector()
+  const {init} = electrojector()
   init.obj = {}
   init.$done()
   t.throws(() => (init.other = {}), 'dependency configuration is already complete')
 })
 
 test('names beginning with $ are reserved', t => {
-  const {deps, init} = electrojector()
+  const {init} = electrojector()
   t.throws(() => (init.$reservedName = 'aaa'), 'names begining with $ are reserved')
 })
 
 test('errors on get of unrecognized reserved name', t => {
-  const {deps, init} = electrojector()
+  const {init} = electrojector()
   t.throws(() => init.$reservedName, '$reservedName is not an init method')
 })
 
 test('init fn calls done', t => {
   let init
-  const deps = electrojector(_init => (init = _init))
+  electrojector(_init => (init = _init))
   t.throws(() => (init.other = {}), 'dependency configuration is already complete')
 })
