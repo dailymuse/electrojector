@@ -52,6 +52,20 @@ test('$inject directory', t => {
   t.is(deps.aDirectory, 7)
 })
 
+test('$inject not a function', t => {
+  const {deps, init} = electrojector()
+  init.$inject('./dependencies/independent')
+  const err = t.throws(() => deps.independent)
+  t.is(err.message, "Module 'independent' doesn't export a function")
+})
+
+test('$inject call fails', t => {
+  const {deps, init} = electrojector()
+  init.$inject('./dependencies/broken')
+  const err = t.throws(() => deps.broken)
+  t.is(err.message, "Couldn't initialize 'broken' - some error")
+})
+
 test('$config', t => {
   const {deps, init} = electrojector()
   init.$config('./config')

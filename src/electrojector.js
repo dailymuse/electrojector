@@ -110,7 +110,16 @@ class Electrojector {
 
   $inject (_name, request) {
     const {absPath, name} = this.resolve(_name, request)
-    this.installFault(name, deps => require(absPath)(deps))
+    this.installFault(name, deps => {
+      const fn = require(absPath)
+      if (typeof fn !== 'function') throw new Error(`Module '${name}' doesn't export a function`)
+      try {
+        return fn(deps)
+      } catch (e) {
+        e.message = `Couldn't initialize '${name}' - ${e.message.replace('Error: ', '')}`
+        throw e
+      }
+    })
   }
 
   $require (_name, request) {
