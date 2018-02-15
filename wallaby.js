@@ -1,6 +1,6 @@
 module.exports = wallaby => {
   return {
-    files: ['index.js', 'src/**/*.js', 'test/config/*.json', 'test/*/*.js'],
+    files: ['index.js', 'src/**/*.js', 'test/config/*.json', 'test/dependenies/**/*'],
     tests: ['test/*.js'],
     debug: true,
     testFramework: 'ava',

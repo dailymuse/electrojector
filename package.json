@@ -5,7 +5,7 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
-    "ava": "~0.24.0",
+    "ava": "^0.25.0",
     "standard": "~10.0.3"
   },
   "dependencies": {
@@ -19,7 +19,8 @@
     "source": [
       "index.js",
       "src/*.js",
-      "test/*/*"
+      "test/config/**/*",
+      "test/dependencies/**/*"
     ]
   },
   "scripts": {
