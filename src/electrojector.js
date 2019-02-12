@@ -1,5 +1,5 @@
 const path = require('path')
-const Conflator = require('conflator')
+const Conflator = require('@themuse/conflator')
 const Module = require('module')
 
 class Electrojector {
@@ -14,7 +14,7 @@ class Electrojector {
 
   scope () {
     const lazyTarget = {}
-    const eagerTarget = {$: new Proxy(lazyTarget, this)}
+    const eagerTarget = { $: new Proxy(lazyTarget, this) }
     return {
       deps: this.deps,
       init: new Proxy(eagerTarget, this)
@@ -95,7 +95,7 @@ class Electrojector {
       paths: Module._nodeModulePaths(path.dirname(origin))
     })
     const name = _name || path.basename(request).split('.')[0]
-    return {origin, absPath, name}
+    return { origin, absPath, name }
   }
 
   $config (request) {
@@ -109,7 +109,7 @@ class Electrojector {
   }
 
   $inject (_name, request) {
-    const {absPath, name} = this.resolve(_name, request)
+    const { absPath, name } = this.resolve(_name, request)
     this.installFault(name, deps => {
       const fn = require(absPath)
       if (typeof fn !== 'function') throw new Error(`Module '${name}' doesn't export a function`)
@@ -123,7 +123,7 @@ class Electrojector {
   }
 
   $require (_name, request) {
-    const {absPath, name} = this.resolve(_name, request)
+    const { absPath, name } = this.resolve(_name, request)
     this.installFault(name, () => require(absPath))
   }
 }
