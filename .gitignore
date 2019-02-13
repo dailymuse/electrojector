@@ -3,6 +3,8 @@
 
 # dependency directories
 node_modules/
+.nyc_output/
+coverage/
 
 # IDEs
 .vscode/
@@ -10,3 +12,4 @@ node_modules/
 
 # testing
 test-output.txt
+coverage.lcov
