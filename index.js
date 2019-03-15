@@ -1,11 +1,11 @@
-const Electrojector = require('./src/electrojector')
+const Electrojector = require("./src/electrojector");
 
 module.exports = fn => {
-  const scope = Electrojector.scope()
+  const scope = Electrojector.scope();
   if (fn) {
-    fn(scope.init)
-    scope.init.$done()
-    return scope.deps
+    fn(scope.init);
+    scope.init.$done();
+    return scope.deps;
   }
-  return scope
-}
+  return scope;
+};
