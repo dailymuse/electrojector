@@ -1,6 +1,6 @@
 {
   "name": "@themuse/electrojector",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Simple dependency injection for JS",
   "main": "index.js",
   "author": "Daily Muse, Inc.",
