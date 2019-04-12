@@ -52,13 +52,6 @@ wait_for_vpn: &wait_for_vpn
       host -R 3 -W 5 inf.themuse.com 10.0.0.2
   no_output_timeout: 3m
 
-gen_npmrc: &gen_npmrc
-  name: Gen npmrc
-  command: |
-    rm -f .npmrc
-    echo '@themuse:registry=https://verdaccio.inf.themuse.com/'  >> .npmrc
-    echo "//verdaccio.inf.themuse.com/:_authToken=${NPM_AUTH_TOKEN}" >> .npmrc
-
 build: &build
   name: Build
   command: docker build --build-arg GEMFURY_TOKEN --build-arg NODE_ENV=${NODE_ENV:-development} -t electrojector .
@@ -94,7 +87,6 @@ jobs:
       - checkout
       - run: *start_vpn
       - run: *wait_for_vpn
-      - run: *gen_npmrc
       - run:
             name: Publish
             command: |
