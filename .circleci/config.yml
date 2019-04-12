@@ -61,7 +61,7 @@ gen_npmrc: &gen_npmrc
 
 build: &build
   name: Build
-  command: docker build --build-arg NODE_ENV=${NODE_ENV:-development} --network=container:ovpn -t electrojector .
+  command: docker build --build-arg GEMFURY_TOKEN --build-arg NODE_ENV=${NODE_ENV:-development} -t electrojector .
 
 version: 2
 jobs:
@@ -108,7 +108,7 @@ jobs:
                 -v $(pwd):/app/workspace \
                 -w /app/workspace \
                 --env NPM_AUTH_TOKEN \
-                --env GEMFURY_PUSH_TOKEN \
+                --env GEMFURY_TOKEN=$GEMFURY_PUSH_TOKEN \
                 circleci/node:10 \
                 ./ci/publish $package_name $package_version $dist_tag $CIRCLE_BUILD_NUM $CIRCLE_BRANCH
               echo "To install via dist-tag: npm install --save $PACKAGE_NAME@$DIST_TAG"
