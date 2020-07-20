@@ -44,7 +44,6 @@ jobs:
           name: Execute Tests & coverage
           command: |
             docker run --rm electrojector yarn run test
-            docker run -e "CODECOV_TOKEN=$CODECOV_TOKEN" --rm electrojector yarn run coverage
 
   publish:
     <<: *defaults
